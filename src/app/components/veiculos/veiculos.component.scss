@@ -1,0 +1,18 @@
+.page { padding: var(--spacing-xl); }
+.header-actions { display: flex; align-items: center; gap: var(--spacing-md); }
+.search-bar input { width: 280px; }
+.vehicles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-md); }
+.vehicle-card { padding: var(--spacing-lg); }
+.vehicle-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: var(--spacing-md); }
+.vehicle-icon { width: 48px; height: 48px; border-radius: var(--radius-md); background: linear-gradient(135deg, #00d2ff, #00b4d8); display: flex; align-items: center; justify-content: center; .material-icons-round { font-size: 24px; color: #fff; } }
+.vehicle-actions { display: flex; gap: var(--spacing-xs); }
+.btn-icon.danger:hover { background: rgba(255, 82, 82, 0.15); color: var(--accent-danger); border-color: rgba(255, 82, 82, 0.3); }
+.vehicle-body { margin-bottom: var(--spacing-md); h3 { font-size: 1.1rem; color: var(--text-primary); margin-bottom: 2px; } .vehicle-year { font-size: 0.85rem; color: var(--accent-secondary); font-weight: 600; } }
+.vehicle-details { display: flex; flex-direction: column; gap: var(--spacing-sm); padding-top: var(--spacing-md); border-top: 1px solid var(--border-color); }
+.detail { display: flex; align-items: center; gap: var(--spacing-sm); font-size: 0.85rem; color: var(--text-secondary); .material-icons-round { font-size: 16px; color: var(--text-muted); } }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-md); }
+.delete-modal { text-align: center; max-width: 400px;
+  .delete-icon { width: 64px; height: 64px; border-radius: var(--radius-full); background: rgba(255, 82, 82, 0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--spacing-md); .material-icons-round { font-size: 32px; color: var(--accent-danger); } }
+  h3 { margin-bottom: var(--spacing-sm); } p { color: var(--text-secondary); font-size: 0.9rem; } .modal-actions { justify-content: center; }
+}
+@media (max-width: 768px) { .header-actions { flex-direction: column; align-items: stretch; } .search-bar input { width: 100%; } .form-row { grid-template-columns: 1fr; } .vehicles-grid { grid-template-columns: 1fr; } }
