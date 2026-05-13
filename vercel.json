@@ -1,6 +1,6 @@
 {
   "buildCommand": "npm run build",
-  "outputDirectory": "dist/oficina-system",
+  "outputDirectory": "dist/oficina-system/browser",
   "framework": "angular",
   "headers": [
     {

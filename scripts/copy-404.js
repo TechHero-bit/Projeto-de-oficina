@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const distPath = path.join(__dirname, '../dist/oficina-system');
+const distPath = path.join(__dirname, '../dist/oficina-system/browser');
 const indexPath = path.join(distPath, 'index.html');
 const notFoundPath = path.join(distPath, '404.html');
 
