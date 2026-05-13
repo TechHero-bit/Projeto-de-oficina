@@ -1,10 +1,8 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist/oficina-system",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html", "status": 200 }
   ]
 }
