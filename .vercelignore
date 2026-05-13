@@ -1,0 +1,10 @@
+node_modules
+.git
+.gitignore
+src
+angular.json
+tsconfig.json
+tsconfig.app.json
+package-lock.json
+README.md
+scripts
