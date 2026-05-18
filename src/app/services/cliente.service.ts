@@ -15,12 +15,16 @@ export class ClienteService {
   private clientesSubject = new BehaviorSubject<Cliente[]>([]);
 
   getClientes(): Observable<Cliente[]> {
-    return this.http.get<Cliente[]>(this.apiUrl);
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      map(clientes => clientes.map(c => ({
+        ...c,
+        dataCadastro: c.data_criacao || c.criado_em ? new Date(c.data_criacao || c.criado_em) : undefined
+      })))
+    );
   }
 
   getClienteById(id: number): Observable<Cliente | undefined> {
-    // Busca do backend ou filtra da lista se quiser cache. Por simplificacao, buscará todos ou da API (ainda a implementar GET /id na API)
-    return this.http.get<Cliente[]>(this.apiUrl).pipe(
+    return this.getClientes().pipe(
       map(clientes => clientes.find(c => c.id === id))
     );
   }

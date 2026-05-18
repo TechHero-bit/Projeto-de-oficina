@@ -103,7 +103,7 @@ app.get('/api/veiculos', async (req, res) => {
       ano: row.ano,
       placa: row.placa,
       cor: row.cor,
-      quilometragem: row.quilometragem
+      quilometragem: row.km_atual
     }));
     
     res.json(veiculos);
@@ -127,7 +127,7 @@ app.get('/api/veiculos/:id', async (req, res) => {
       ano: row.ano,
       placa: row.placa,
       cor: row.cor,
-      quilometragem: row.quilometragem
+      quilometragem: row.km_atual
     });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao buscar veículo' });
@@ -138,13 +138,18 @@ app.post('/api/veiculos', async (req, res) => {
   try {
     const { clienteId, marca, modelo, ano, placa, cor, quilometragem } = req.body;
     const result = await pool.query(
-      'INSERT INTO veiculos (cliente_id, marca, modelo, ano, placa, cor, quilometragem) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      'INSERT INTO veiculos (cliente_id, marca, modelo, ano, placa, cor, km_atual) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
       [clienteId, marca, modelo, ano, placa, cor, quilometragem]
     );
     res.status(201).json({
        id: result.rows[0].id,
        clienteId: result.rows[0].cliente_id,
-       ...result.rows[0]
+       marca: result.rows[0].marca,
+       modelo: result.rows[0].modelo,
+       ano: result.rows[0].ano,
+       placa: result.rows[0].placa,
+       cor: result.rows[0].cor,
+       quilometragem: result.rows[0].km_atual
     });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao criar veículo', details: err.message });
@@ -156,14 +161,19 @@ app.put('/api/veiculos/:id', async (req, res) => {
     const { id } = req.params;
     const { clienteId, marca, modelo, ano, placa, cor, quilometragem } = req.body;
     const result = await pool.query(
-      'UPDATE veiculos SET cliente_id = $1, marca = $2, modelo = $3, ano = $4, placa = $5, cor = $6, quilometragem = $7 WHERE id = $8 RETURNING *',
+      'UPDATE veiculos SET cliente_id = $1, marca = $2, modelo = $3, ano = $4, placa = $5, cor = $6, km_atual = $7 WHERE id = $8 RETURNING *',
       [clienteId, marca, modelo, ano, placa, cor, quilometragem, id]
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Veículo não encontrado' });
     res.json({
        id: result.rows[0].id,
        clienteId: result.rows[0].cliente_id,
-       ...result.rows[0]
+       marca: result.rows[0].marca,
+       modelo: result.rows[0].modelo,
+       ano: result.rows[0].ano,
+       placa: result.rows[0].placa,
+       cor: result.rows[0].cor,
+       quilometragem: result.rows[0].km_atual
     });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao atualizar veículo' });
@@ -183,6 +193,28 @@ app.delete('/api/veiculos/:id', async (req, res) => {
 // ==========================================
 // ORDENS DE SERVIÇO
 // ==========================================
+
+// Mapeamento de status entre Banco de Dados (Supabase) e Frontend (Angular)
+function mapStatusDbToApi(dbStatus) {
+  if (!dbStatus) return 'pendente';
+  const status = dbStatus.toUpperCase();
+  if (status === 'ABERTA' || status === 'PENDENTE') return 'pendente';
+  if (status === 'EM_ANDAMENTO') return 'em_andamento';
+  if (status === 'CONCLUIDA') return 'concluida';
+  if (status === 'CANCELADA') return 'cancelada';
+  return dbStatus.toLowerCase();
+}
+
+function mapStatusApiToDb(apiStatus) {
+  if (!apiStatus) return 'ABERTA';
+  const status = apiStatus.toLowerCase();
+  if (status === 'pendente') return 'ABERTA';
+  if (status === 'em_andamento') return 'EM_ANDAMENTO';
+  if (status === 'concluida') return 'CONCLUIDA';
+  if (status === 'cancelada') return 'CANCELADA';
+  return apiStatus.toUpperCase();
+}
+
 app.get('/api/ordens-servico', async (req, res) => {
   try {
     const query = `
@@ -207,12 +239,12 @@ app.get('/api/ordens-servico', async (req, res) => {
         clienteNome: row.clienteNome,
         veiculoId: row.veiculo_id,
         veiculoInfo: row.veiculoInfo,
-        descricaoProblema: row.descricao_problema,
-        status: row.status,
-        dataAbertura: row.data_abertura,
+        descricaoProblema: row.descricao,
+        status: mapStatusDbToApi(row.status),
+        dataAbertura: row.data_criacao,
         dataConclusao: row.data_conclusao,
         observacoes: row.observacoes,
-        valorTotal: row.valor_total,
+        valorTotal: Number(row.valor_total),
         servicos: itemsResult.rows.map(item => ({
             descricao: item.descricao,
             valor: Number(item.valor)
@@ -239,12 +271,12 @@ app.get('/api/ordens-servico/:id', async (req, res) => {
         id: row.id,
         clienteId: row.cliente_id,
         veiculoId: row.veiculo_id,
-        descricaoProblema: row.descricao_problema,
-        status: row.status,
-        dataAbertura: row.data_abertura,
+        descricaoProblema: row.descricao,
+        status: mapStatusDbToApi(row.status),
+        dataAbertura: row.data_criacao,
         dataConclusao: row.data_conclusao,
         observacoes: row.observacoes,
-        valorTotal: row.valor_total,
+        valorTotal: Number(row.valor_total),
         servicos: itemsResult.rows.map(item => ({
             descricao: item.descricao,
             valor: Number(item.valor)
@@ -260,11 +292,15 @@ app.post('/api/ordens-servico', async (req, res) => {
   try {
     await client.query('BEGIN');
     
-    const { clienteId, veiculoId, descricaoProblema, servicos, observacoes, valorTotal } = req.body;
+    const { clienteId, veiculoId, descricaoProblema, servicos, observacoes, valorTotal, status } = req.body;
+    
+    // Gerar numero_os único compatível com a restrição de não nulo do Supabase
+    const numeroOs = `OS-${new Date().getFullYear()}${(new Date().getMonth()+1).toString().padStart(2,'0')}-${Math.floor(100000 + Math.random() * 900000)}`;
+    const statusDb = mapStatusApiToDb(status || 'pendente');
     
     const osResult = await client.query(
-      'INSERT INTO ordens_servico (cliente_id, veiculo_id, descricao_problema, observacoes, valor_total) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      [clienteId, veiculoId, descricaoProblema, observacoes, valorTotal]
+      'INSERT INTO ordens_servico (cliente_id, veiculo_id, descricao, observacoes, valor_total, status, numero_os) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [clienteId, veiculoId, descricaoProblema, observacoes, valorTotal, statusDb, numeroOs]
     );
     
     const osId = osResult.rows[0].id;
@@ -293,11 +329,26 @@ app.put('/api/ordens-servico/:id', async (req, res) => {
   try {
     await client.query('BEGIN');
     const { id } = req.params;
-    const { status, observacoes, valorTotal, dataConclusao } = req.body;
+    
+    // Fetch the existing order to merge updates and prevent overwriting existing columns with null
+    const existingResult = await client.query('SELECT * FROM ordens_servico WHERE id = $1', [id]);
+    if (existingResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'OS não encontrada' });
+    }
+    const existingOS = existingResult.rows[0];
+    
+    const { status, observacoes, valorTotal, dataConclusao, servicos } = req.body;
+    
+    // Merge updates: if field is not provided in req.body, keep existing value from DB
+    const finalStatus = status !== undefined ? mapStatusApiToDb(status) : existingOS.status;
+    const finalObservacoes = observacoes !== undefined ? observacoes : existingOS.observacoes;
+    const finalValorTotal = valorTotal !== undefined ? valorTotal : existingOS.valor_total;
+    const finalDataConclusao = dataConclusao !== undefined ? dataConclusao : existingOS.data_conclusao;
     
     const result = await client.query(
       'UPDATE ordens_servico SET status = $1, observacoes = $2, valor_total = $3, data_conclusao = $4 WHERE id = $5 RETURNING *',
-      [status, observacoes, valorTotal, dataConclusao, id]
+      [finalStatus, finalObservacoes, finalValorTotal, finalDataConclusao, id]
     );
     
     if (result.rows.length === 0) {
@@ -305,11 +356,25 @@ app.put('/api/ordens-servico/:id', async (req, res) => {
       return res.status(404).json({ error: 'OS não encontrada' });
     }
     
+    // Sincronizar itens de serviço se eles foram enviados na requisição de edição
+    if (servicos && servicos.length > 0) {
+      // Remover itens antigos
+      await client.query('DELETE FROM itens_servico WHERE ordem_servico_id = $1', [id]);
+      
+      // Inserir novos itens
+      for (const servico of servicos) {
+        await client.query(
+          'INSERT INTO itens_servico (ordem_servico_id, descricao, valor) VALUES ($1, $2, $3)',
+          [id, servico.descricao, servico.valor]
+        );
+      }
+    }
+    
     await client.query('COMMIT');
     res.json({ message: 'OS atualizada com sucesso' });
   } catch (err) {
     await client.query('ROLLBACK');
-    res.status(500).json({ error: 'Erro ao atualizar OS' });
+    res.status(500).json({ error: 'Erro ao atualizar OS', details: err.message });
   } finally {
     client.release();
   }
