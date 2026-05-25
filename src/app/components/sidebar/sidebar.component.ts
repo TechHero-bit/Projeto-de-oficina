@@ -12,10 +12,10 @@ import { RouterModule } from '@angular/router';
       <div class="sidebar-header">
         <div class="logo">
           <div class="logo-icon">
-            <span class="material-icons-round">build_circle</span>
+            <span class="material-icons-round">build</span>
           </div>
           <div class="logo-text" *ngIf="!isCollapsed">
-            <h1>AutoPro</h1>
+            <h1>OFIMEC</h1>
             <span>Oficina</span>
           </div>
         </div>
@@ -151,7 +151,7 @@ import { RouterModule } from '@angular/router';
       .material-icons-round { font-size: 18px; }
 
       &:hover {
-        background: rgba(108, 99, 255, 0.2);
+        background: rgba(161, 35, 43, 0.15);
         color: var(--accent-primary);
       }
     }
@@ -185,14 +185,15 @@ import { RouterModule } from '@angular/router';
       }
 
       &:hover {
-        background: rgba(108, 99, 255, 0.1);
+        background: rgba(161, 35, 43, 0.08);
         color: var(--text-primary);
       }
 
       &.active {
-        background: rgba(108, 99, 255, 0.15);
+        background: rgba(161, 35, 43, 0.15);
         color: var(--accent-primary-light);
         font-weight: 600;
+        box-shadow: var(--metallic-bevel);
 
         &::before {
           content: '';
@@ -200,8 +201,8 @@ import { RouterModule } from '@angular/router';
           left: 0;
           top: 6px;
           bottom: 6px;
-          width: 3px;
-          border-radius: 0 3px 3px 0;
+          width: 4px;
+          border-radius: 0 4px 4px 0;
           background: var(--gradient-primary);
         }
       }

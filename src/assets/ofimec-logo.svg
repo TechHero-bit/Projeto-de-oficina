@@ -1,0 +1,477 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <!-- Background vignette radial gradient -->
+    <radialGradient id="bgVignette" cx="50%" cy="50%" r="55%" fx="50%" fy="48%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="65%" stop-color="#f5f5f5"/>
+      <stop offset="80%" stop-color="#d0d0d0"/>
+      <stop offset="90%" stop-color="#6a6a6a"/>
+      <stop offset="100%" stop-color="#2a2a2a"/>
+    </radialGradient>
+
+    <!-- Shield outer maroon border gradient -->
+    <linearGradient id="maroonBorder" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7a1a1a"/>
+      <stop offset="30%" stop-color="#5e1010"/>
+      <stop offset="50%" stop-color="#6b1515"/>
+      <stop offset="70%" stop-color="#4d0c0c"/>
+      <stop offset="100%" stop-color="#3a0808"/>
+    </linearGradient>
+
+    <!-- Shield metallic rim gradient -->
+    <linearGradient id="metallicRim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e8e8e8"/>
+      <stop offset="15%" stop-color="#c0c0c0"/>
+      <stop offset="40%" stop-color="#a8a8a8"/>
+      <stop offset="60%" stop-color="#888888"/>
+      <stop offset="80%" stop-color="#6e6e6e"/>
+      <stop offset="100%" stop-color="#555555"/>
+    </linearGradient>
+
+    <!-- Shield inner area gradient (for louvre background) -->
+    <linearGradient id="shieldInner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#b0b0b0"/>
+      <stop offset="20%" stop-color="#999999"/>
+      <stop offset="50%" stop-color="#7a7a7a"/>
+      <stop offset="80%" stop-color="#5a5a5a"/>
+      <stop offset="100%" stop-color="#454545"/>
+    </linearGradient>
+
+    <!-- Wrench head/jaw metallic gradient -->
+    <linearGradient id="wrenchJaw" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="#e0e0e0"/>
+      <stop offset="10%" stop-color="#d5d5d5"/>
+      <stop offset="25%" stop-color="#c8c8c8"/>
+      <stop offset="40%" stop-color="#b8b0b0"/>
+      <stop offset="55%" stop-color="#c49090"/>
+      <stop offset="70%" stop-color="#b87070"/>
+      <stop offset="85%" stop-color="#a85555"/>
+      <stop offset="100%" stop-color="#8a3030"/>
+    </linearGradient>
+
+    <!-- Wrench handle gradient: red to darker cherry -->
+    <linearGradient id="wrenchHandle" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#b83535"/>
+      <stop offset="15%" stop-color="#a52828"/>
+      <stop offset="30%" stop-color="#9a2222"/>
+      <stop offset="50%" stop-color="#8a1a1a"/>
+      <stop offset="70%" stop-color="#7d1515"/>
+      <stop offset="85%" stop-color="#701212"/>
+      <stop offset="100%" stop-color="#5a0e0e"/>
+    </linearGradient>
+
+    <!-- Wrench left highlight -->
+    <linearGradient id="wrenchHighlightLeft" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.35)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+
+    <!-- Wrench right shadow -->
+    <linearGradient id="wrenchShadowRight" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(0,0,0,0)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0.3)"/>
+    </linearGradient>
+
+    <!-- Wrench jaw left side metallic -->
+    <linearGradient id="jawLeft" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d8d8d8"/>
+      <stop offset="30%" stop-color="#c0c0c0"/>
+      <stop offset="60%" stop-color="#a8a0a0"/>
+      <stop offset="100%" stop-color="#b08080"/>
+    </linearGradient>
+
+    <!-- Wrench jaw right side metallic -->
+    <linearGradient id="jawRight" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#cccccc"/>
+      <stop offset="30%" stop-color="#b0b0b0"/>
+      <stop offset="60%" stop-color="#a09090"/>
+      <stop offset="100%" stop-color="#987070"/>
+    </linearGradient>
+
+    <!-- Text panel metallic gradient -->
+    <linearGradient id="textPanel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8d8d8"/>
+      <stop offset="20%" stop-color="#c5c5c5"/>
+      <stop offset="40%" stop-color="#b0b0b0"/>
+      <stop offset="60%" stop-color="#9a9a9a"/>
+      <stop offset="80%" stop-color="#888888"/>
+      <stop offset="100%" stop-color="#777777"/>
+    </linearGradient>
+
+    <!-- Text panel border metallic -->
+    <linearGradient id="textPanelBorder" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#aaaaaa"/>
+      <stop offset="50%" stop-color="#888888"/>
+      <stop offset="100%" stop-color="#666666"/>
+    </linearGradient>
+
+    <!-- Wrench jaw top metallic complex -->
+    <linearGradient id="jawTopMetallic" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#e8e8e8"/>
+      <stop offset="20%" stop-color="#d0d0d0"/>
+      <stop offset="50%" stop-color="#c0b8b8"/>
+      <stop offset="80%" stop-color="#c0a0a0"/>
+      <stop offset="100%" stop-color="#b88888"/>
+    </linearGradient>
+
+    <!-- Handle slot gradient -->
+    <linearGradient id="handleSlot" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#c88040"/>
+      <stop offset="20%" stop-color="#b87030"/>
+      <stop offset="50%" stop-color="#a06020"/>
+      <stop offset="80%" stop-color="#b87030"/>
+      <stop offset="100%" stop-color="#c88040"/>
+    </linearGradient>
+
+    <!-- Wrench transition zone gradient -->
+    <linearGradient id="wrenchTransition" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#c8a0a0"/>
+      <stop offset="30%" stop-color="#c07070"/>
+      <stop offset="60%" stop-color="#b85050"/>
+      <stop offset="100%" stop-color="#a83535"/>
+    </linearGradient>
+
+    <!-- Louvre line gradients -->
+    <linearGradient id="louvreLine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(80,80,80,0.5)"/>
+      <stop offset="20%" stop-color="rgba(60,60,60,0.7)"/>
+      <stop offset="50%" stop-color="rgba(50,50,50,0.8)"/>
+      <stop offset="80%" stop-color="rgba(60,60,60,0.7)"/>
+      <stop offset="100%" stop-color="rgba(80,80,80,0.5)"/>
+    </linearGradient>
+
+    <!-- Drop shadow filter -->
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="rgba(0,0,0,0.35)"/>
+    </filter>
+
+    <!-- Slight inner shadow for shield -->
+    <filter id="innerGlow" x="-5%" y="-5%" width="110%" height="110%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3" result="blur"/>
+      <feOffset dx="0" dy="2" result="offsetBlur"/>
+      <feComposite in="SourceGraphic" in2="offsetBlur" operator="over"/>
+    </filter>
+
+    <!-- Clip path for louvre area -->
+    <clipPath id="shieldClip">
+      <circle cx="400" cy="375" r="165"/>
+    </clipPath>
+
+    <!-- Clip for inner shield content -->
+    <clipPath id="innerShieldClip">
+      <circle cx="400" cy="375" r="155"/>
+    </clipPath>
+
+    <!-- Handle bottom gradient -->
+    <linearGradient id="handleBottom" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#7d1515"/>
+      <stop offset="40%" stop-color="#6a1010"/>
+      <stop offset="100%" stop-color="#4a0808"/>
+    </linearGradient>
+
+    <!-- Wrench jaw specular highlight -->
+    <linearGradient id="jawSpecular" x1="0.3" y1="0" x2="0.7" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
+      <stop offset="40%" stop-color="rgba(255,255,255,0.15)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </linearGradient>
+
+    <!-- Maroon border top highlight -->
+    <linearGradient id="maroonHighlight" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#9a2525"/>
+      <stop offset="30%" stop-color="#7a1a1a"/>
+      <stop offset="100%" stop-color="#4a0a0a"/>
+    </linearGradient>
+
+    <!-- X-cross behind shield -->
+    <linearGradient id="crossGrad" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#8a1818"/>
+      <stop offset="50%" stop-color="#6a1010"/>
+      <stop offset="100%" stop-color="#4a0808"/>
+    </linearGradient>
+
+    <!-- Wrench shaft main gradient (left-right metallic shading) -->
+    <linearGradient id="shaftLR" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(255,180,180,0.4)"/>
+      <stop offset="30%" stop-color="rgba(255,220,220,0.25)"/>
+      <stop offset="50%" stop-color="rgba(255,255,255,0.15)"/>
+      <stop offset="70%" stop-color="rgba(200,150,150,0.1)"/>
+      <stop offset="100%" stop-color="rgba(80,20,20,0.3)"/>
+    </linearGradient>
+
+  </defs>
+
+  <!-- Background with vignette -->
+  <rect width="800" height="800" fill="url(#bgVignette)"/>
+
+  <!-- ============ MAIN CIRCLE BACKGROUND ============ -->
+  <circle cx="400" cy="390" r="310" fill="#ffffff" filter="url(#dropShadow)"/>
+
+  <!-- ============ X-CROSS BEHIND SHIELD ============ -->
+  <g>
+    <!-- Diagonal cross arms behind the shield, maroon/dark red -->
+    <line x1="270" y1="230" x2="530" y2="520" stroke="url(#crossGrad)" stroke-width="52" stroke-linecap="round"/>
+    <line x1="530" y1="230" x2="270" y2="520" stroke="url(#crossGrad)" stroke-width="52" stroke-linecap="round"/>
+    <!-- Thin dark outline on cross -->
+    <line x1="270" y1="230" x2="530" y2="520" stroke="#3a0606" stroke-width="56" stroke-linecap="round" opacity="0.3"/>
+    <line x1="530" y1="230" x2="270" y2="520" stroke="#3a0606" stroke-width="56" stroke-linecap="round" opacity="0.3"/>
+    <line x1="270" y1="230" x2="530" y2="520" stroke="url(#crossGrad)" stroke-width="48" stroke-linecap="round"/>
+    <line x1="530" y1="230" x2="270" y2="520" stroke="url(#crossGrad)" stroke-width="48" stroke-linecap="round"/>
+  </g>
+
+  <!-- ============ SHIELD ASSEMBLY ============ -->
+  <!-- Outer maroon border ring -->
+  <circle cx="400" cy="375" r="190" fill="none" stroke="url(#maroonHighlight)" stroke-width="22"/>
+  <circle cx="400" cy="375" r="190" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="24"/>
+  <circle cx="400" cy="375" r="190" fill="none" stroke="url(#maroonHighlight)" stroke-width="20"/>
+
+  <!-- Metallic rim -->
+  <circle cx="400" cy="375" r="176" fill="none" stroke="url(#metallicRim)" stroke-width="14"/>
+  <!-- Thin dark separator -->
+  <circle cx="400" cy="375" r="168" fill="none" stroke="#444" stroke-width="2"/>
+
+  <!-- Shield inner fill with louvre pattern -->
+  <circle cx="400" cy="375" r="165" fill="url(#shieldInner)"/>
+
+  <!-- ============ LOUVRE PATTERN ============ -->
+  <g clip-path="url(#shieldClip)" opacity="0.7">
+    <!-- Horizontal lines creating the louvre/vent pattern -->
+    <line x1="220" y1="225" x2="580" y2="225" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="237" x2="580" y2="237" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="249" x2="580" y2="249" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="261" x2="580" y2="261" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="273" x2="580" y2="273" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="285" x2="580" y2="285" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="297" x2="580" y2="297" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="309" x2="580" y2="309" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="321" x2="580" y2="321" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="333" x2="580" y2="333" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="345" x2="580" y2="345" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="357" x2="580" y2="357" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="369" x2="580" y2="369" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="381" x2="580" y2="381" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="393" x2="580" y2="393" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="405" x2="580" y2="405" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="417" x2="580" y2="417" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="429" x2="580" y2="429" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="441" x2="580" y2="441" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="453" x2="580" y2="453" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="465" x2="580" y2="465" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="477" x2="580" y2="477" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="489" x2="580" y2="489" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="501" x2="580" y2="501" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="513" x2="580" y2="513" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <line x1="220" y1="525" x2="580" y2="525" stroke="rgba(40,40,40,0.5)" stroke-width="2.5"/>
+    <!-- Highlight lines between -->
+    <line x1="220" y1="231" x2="580" y2="231" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="243" x2="580" y2="243" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="255" x2="580" y2="255" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="267" x2="580" y2="267" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="279" x2="580" y2="279" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="291" x2="580" y2="291" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="303" x2="580" y2="303" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="315" x2="580" y2="315" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="327" x2="580" y2="327" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="339" x2="580" y2="339" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="351" x2="580" y2="351" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="363" x2="580" y2="363" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="375" x2="580" y2="375" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="387" x2="580" y2="387" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="399" x2="580" y2="399" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="411" x2="580" y2="411" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="423" x2="580" y2="423" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="435" x2="580" y2="435" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="447" x2="580" y2="447" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="459" x2="580" y2="459" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="471" x2="580" y2="471" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="483" x2="580" y2="483" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="495" x2="580" y2="495" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="507" x2="580" y2="507" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+    <line x1="220" y1="519" x2="580" y2="519" stroke="rgba(200,200,200,0.2)" stroke-width="1"/>
+  </g>
+
+  <!-- ============ ADJUSTABLE WRENCH ============ -->
+  <g filter="url(#dropShadow)">
+
+    <!-- ---- WRENCH HANDLE (lower part) ---- -->
+    <!-- Main handle body -->
+    <path d="M378,395 L378,580 Q378,600 400,600 Q422,600 422,580 L422,395 Z" fill="url(#wrenchHandle)"/>
+    <!-- Handle left highlight -->
+    <path d="M378,395 L378,580 Q378,600 390,600 L390,395 Z" fill="url(#wrenchHighlightLeft)" opacity="0.5"/>
+    <!-- Handle right shadow -->
+    <path d="M410,395 L410,580 Q410,600 422,600 Q422,600 422,580 L422,395 Z" fill="url(#wrenchShadowRight)" opacity="0.4"/>
+
+    <!-- Handle slot/opening (oval hole) -->
+    <ellipse cx="400" cy="545" rx="10" ry="28" fill="url(#handleSlot)" stroke="#5a3010" stroke-width="1.5"/>
+    <ellipse cx="400" cy="545" rx="8" ry="25" fill="none" stroke="rgba(255,200,150,0.3)" stroke-width="1"/>
+
+    <!-- Handle bottom rounded cap -->
+    <path d="M378,575 L378,585 Q378,605 400,605 Q422,605 422,585 L422,575 Z" fill="url(#handleBottom)"/>
+
+    <!-- ---- WRENCH TRANSITION ZONE ---- -->
+    <!-- Widening from handle into the jaw mechanism -->
+    <path d="M370,350 L370,400 L430,400 L430,350 Q430,330 420,320 L380,320 Q370,330 370,350 Z" fill="url(#wrenchTransition)"/>
+    <path d="M370,350 L370,400 L385,400 L385,350 Q385,335 380,320 L380,320 Q370,330 370,350 Z" fill="rgba(255,255,255,0.15)"/>
+
+    <!-- ---- WRENCH JAW / HEAD ---- -->
+    <!-- Main jaw body -->
+    <path d="
+      M360,310
+      L360,250
+      Q360,230 370,220
+      L370,180
+      Q370,165 380,160
+      L380,150
+      Q382,140 390,138
+      L390,195
+      L410,195
+      L410,138
+      Q418,140 420,150
+      L420,160
+      Q430,165 430,180
+      L430,220
+      Q440,230 440,250
+      L440,310
+      Z
+    " fill="url(#jawTopMetallic)"/>
+
+    <!-- Jaw opening (the adjustable gap at top) -->
+    <rect x="390" y="135" width="20" height="65" rx="3" fill="#888" opacity="0.3"/>
+    <rect x="392" y="137" width="16" height="61" rx="2" fill="rgba(60,60,60,0.4)"/>
+
+    <!-- Left jaw prong -->
+    <path d="
+      M365,260
+      L358,240
+      Q355,225 360,215
+      L365,200
+      Q368,185 375,175
+      L380,165
+      Q383,155 385,145
+      L388,140
+      L390,145
+      L390,200
+      L372,230
+      L370,260
+      Z
+    " fill="url(#jawLeft)"/>
+
+    <!-- Right jaw prong -->
+    <path d="
+      M435,260
+      L442,240
+      Q445,225 440,215
+      L435,200
+      Q432,185 425,175
+      L420,165
+      Q417,155 415,145
+      L412,140
+      L410,145
+      L410,200
+      L428,230
+      L430,260
+      Z
+    " fill="url(#jawRight)"/>
+
+    <!-- Jaw specular highlights -->
+    <path d="
+      M365,260
+      L358,240
+      Q355,225 360,215
+      L365,200
+      Q368,185 375,175
+      L380,165
+      L382,168
+      L372,182
+      Q368,195 367,210
+      L365,230
+      Z
+    " fill="url(#jawSpecular)" opacity="0.6"/>
+
+    <!-- Adjustment wheel/worm gear detail -->
+    <rect x="386" y="280" width="28" height="20" rx="4" fill="#aaa" stroke="#777" stroke-width="1"/>
+    <!-- Gear teeth lines -->
+    <line x1="389" y1="282" x2="389" y2="298" stroke="#888" stroke-width="1.5"/>
+    <line x1="393" y1="282" x2="393" y2="298" stroke="#888" stroke-width="1.5"/>
+    <line x1="397" y1="282" x2="397" y2="298" stroke="#888" stroke-width="1.5"/>
+    <line x1="401" y1="282" x2="401" y2="298" stroke="#888" stroke-width="1.5"/>
+    <line x1="405" y1="282" x2="405" y2="298" stroke="#888" stroke-width="1.5"/>
+    <line x1="409" y1="282" x2="409" y2="298" stroke="#888" stroke-width="1.5"/>
+    <!-- Gear top/bottom ridges -->
+    <line x1="386" y1="285" x2="414" y2="285" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+    <line x1="386" y1="295" x2="414" y2="295" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+
+    <!-- Shaft connecting handle and jaw -->
+    <rect x="378" y="300" width="44" height="50" fill="url(#wrenchTransition)"/>
+    <rect x="378" y="300" width="12" height="50" fill="url(#shaftLR)" opacity="0.5"/>
+
+  </g>
+
+  <!-- ============ TEXT PANEL / BANNER ============ -->
+  <g filter="url(#dropShadow)">
+    <!-- Outer maroon banner frame -->
+    <path d="
+      M170,430
+      L175,415
+      Q180,405 200,400
+      L600,400
+      Q620,405 625,415
+      L630,430
+      L630,490
+      L625,505
+      Q620,515 600,520
+      L200,520
+      Q180,515 175,505
+      L170,490
+      Z
+    " fill="url(#maroonHighlight)" stroke="#2a0505" stroke-width="2"/>
+
+    <!-- Inner metallic panel -->
+    <path d="
+      M185,438
+      L188,425
+      Q192,415 210,412
+      L590,412
+      Q608,415 612,425
+      L615,438
+      L615,482
+      L612,495
+      Q608,505 590,508
+      L210,508
+      Q192,505 188,495
+      L185,482
+      Z
+    " fill="url(#textPanel)" stroke="url(#textPanelBorder)" stroke-width="1.5"/>
+
+    <!-- Panel top highlight -->
+    <path d="
+      M190,435
+      L193,425
+      Q197,418 212,415
+      L588,415
+      Q603,418 607,425
+      L610,435
+      L610,440
+      L190,440
+      Z
+    " fill="rgba(255,255,255,0.2)"/>
+  </g>
+
+  <!-- ============ "OFIMEC" TEXT ============ -->
+  <g>
+    <!-- Crimson outline layer (slightly larger/offset) -->
+    <text x="400" y="482" text-anchor="middle" font-family="'Old English Text MT', 'UnifrakturMaguntia', 'Texturina', 'BlackChancery', 'MedievalSharp', serif" font-size="82" font-weight="900" fill="none" stroke="#8a1515" stroke-width="5" letter-spacing="6">OFIMEC</text>
+    <!-- Black fill with crimson border visible -->
+    <text x="400" y="482" text-anchor="middle" font-family="'Old English Text MT', 'UnifrakturMaguntia', 'Texturina', 'BlackChancery', 'MedievalSharp', serif" font-size="82" font-weight="900" fill="none" stroke="#6b1010" stroke-width="4" letter-spacing="6">OFIMEC</text>
+    <!-- Main black text -->
+    <text x="400" y="482" text-anchor="middle" font-family="'Old English Text MT', 'UnifrakturMaguntia', 'Texturina', 'BlackChancery', 'MedievalSharp', serif" font-size="82" font-weight="900" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="1" letter-spacing="6">OFIMEC</text>
+    <!-- Text top highlight -->
+    <text x="400" y="482" text-anchor="middle" font-family="'Old English Text MT', 'UnifrakturMaguntia', 'Texturina', 'BlackChancery', 'MedievalSharp', serif" font-size="82" font-weight="900" fill="rgba(255,255,255,0.05)" letter-spacing="6">OFIMEC</text>
+  </g>
+
+  <!-- ============ DECORATIVE STAR (bottom right) ============ -->
+  <g transform="translate(665, 665)" opacity="0.6">
+    <path d="M0,-12 L3,-3 L12,0 L3,3 L0,12 L-3,3 L-12,0 L-3,-3 Z" fill="#cccccc"/>
+  </g>
+
+</svg>
