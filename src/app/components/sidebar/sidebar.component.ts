@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -49,6 +50,14 @@ import { RouterModule } from '@angular/router';
           <span class="nav-label" *ngIf="!isCollapsed">Ordens de Serviço</span>
         </a>
       </nav>
+
+      <!-- Footer / Logout -->
+      <div class="sidebar-footer">
+        <button class="nav-item logout-btn" (click)="logout()" [attr.title]="isCollapsed ? 'Sair' : null">
+          <span class="material-icons-round">logout</span>
+          <span class="nav-label" *ngIf="!isCollapsed">Sair</span>
+        </button>
+      </div>
     </aside>
   `,
   styles: [`
@@ -200,34 +209,35 @@ import { RouterModule } from '@angular/router';
     }
 
     .sidebar-footer {
-      padding: var(--spacing-md) var(--spacing-lg);
+      padding: var(--spacing-md) var(--spacing-sm);
       border-top: 1px solid var(--border-color);
-      text-align: center;
+    }
 
-      .version-info {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: var(--spacing-xs);
-        color: var(--text-muted);
-        font-size: 0.8rem;
-        margin-bottom: 4px;
+    .logout-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--danger-color, #dc3545);
 
-        .material-icons-round { font-size: 14px; }
-      }
-
-      small {
-        color: var(--text-muted);
-        font-size: 0.7rem;
-        opacity: 0.6;
+      &:hover {
+        background: rgba(220, 53, 69, 0.1);
+        color: var(--danger-color, #dc3545);
       }
     }
   `]
 })
 export class SidebarComponent {
   isCollapsed = false;
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;
+  }
+
+  async logout() {
+    await this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

@@ -25,4 +25,8 @@ export class AuthService {
 
     return true;
   }
+
+  async logout(): Promise<void> {
+    await this.supabaseService.client.auth.signOut();
+  }
 }
