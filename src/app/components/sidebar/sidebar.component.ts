@@ -49,15 +49,6 @@ import { RouterModule } from '@angular/router';
           <span class="nav-label" *ngIf="!isCollapsed">Ordens de Serviço</span>
         </a>
       </nav>
-
-      <!-- Footer -->
-      <div class="sidebar-footer" *ngIf="!isCollapsed">
-        <div class="version-info">
-          <span class="material-icons-round">code</span>
-          <span>Projeto de Estudos</span>
-        </div>
-        <small>Angular 17 • v1.0</small>
-      </div>
     </aside>
   `,
   styles: [`

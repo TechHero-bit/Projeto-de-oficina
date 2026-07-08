@@ -1,14 +1,14 @@
 import { inject } from '@angular/core';
 import { Router, type CanActivateFn } from '@angular/router';
-import { SupabaseService } from '../services/supabase.service';
+import { AuthService } from '../services/auth.service';
 
 export const authGuard: CanActivateFn = async (route, state) => {
-  const supabaseService = inject(SupabaseService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  const { data: { session } } = await supabaseService.client.auth.getSession();
+  const isAuthenticated = await authService.checkAuth();
 
-  if (session) {
+  if (isAuthenticated) {
     return true;
   }
 
