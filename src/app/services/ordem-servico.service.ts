@@ -49,23 +49,43 @@ export class OrdemServicoService {
     };
   }
 
+  private async appendItensToOrdens(ordensData: any | any[]): Promise<OrdemServico[]> {
+    if (!ordensData) return [];
+    const ordensList = Array.isArray(ordensData) ? ordensData : [ordensData];
+    if (ordensList.length === 0) return [];
+    
+    const ids = ordensList.map(o => o.id);
+    const { data: itens, error: itensError } = await this.supabase
+      .from('itens_servico')
+      .select('ordem_servico_id, descricao, valor')
+      .in('ordem_servico_id', ids);
+    
+    if (itensError) throw itensError;
+
+    return ordensList.map(o => {
+      const osItens = (itens || []).filter(i => i.ordem_servico_id === o.id);
+      return this.mapDbToModel({ ...o, itens_servico: osItens });
+    });
+  }
+
   getOrdens(): Observable<OrdemServico[]> {
-    return from(this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo), itens_servico(descricao, valor)').order('id', { ascending: false })).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return (data || []).map(o => this.mapDbToModel(o));
-      })
-    );
+    const promise = async () => {
+      const { data, error } = await this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo)').order('id', { ascending: false });
+      if (error) throw error;
+      return this.appendItensToOrdens(data);
+    };
+    return from(promise());
   }
 
   getOrdemById(id: number): Observable<OrdemServico | undefined> {
-    return from(this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo), itens_servico(descricao, valor)').eq('id', id).single()).pipe(
-      map(({ data, error }) => {
-        if (error && error.code !== 'PGRST116') throw error;
-        if (!data) return undefined;
-        return this.mapDbToModel(data);
-      })
-    );
+    const promise = async () => {
+      const { data, error } = await this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo)').eq('id', id).single();
+      if (error && error.code !== 'PGRST116') throw error;
+      if (!data) return undefined;
+      const res = await this.appendItensToOrdens(data);
+      return res[0];
+    };
+    return from(promise());
   }
 
   addOrdem(ordem: Omit<OrdemServico, 'id' | 'dataAbertura' | 'valorTotal'>): Observable<OrdemServico> {
@@ -99,10 +119,11 @@ export class OrdemServicoService {
       }
 
       // Fetch created OS with all relations
-      const { data: finalOs, error: fetchError } = await this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo), itens_servico(descricao, valor)').eq('id', osId).single();
+      const { data: finalOs, error: fetchError } = await this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo)').eq('id', osId).single();
       if (fetchError) throw fetchError;
       
-      return this.mapDbToModel(finalOs);
+      const res = await this.appendItensToOrdens(finalOs);
+      return res[0];
     };
 
     return from(createPromise());
@@ -173,12 +194,12 @@ export class OrdemServicoService {
 
   getByStatus(status: StatusOS): Observable<OrdemServico[]> {
     const dbStatus = this.mapStatusApiToDb(status);
-    return from(this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo), itens_servico(descricao, valor)').eq('status', dbStatus).order('id', { ascending: false })).pipe(
-      map(({ data, error }) => {
-        if (error) throw error;
-        return (data || []).map(o => this.mapDbToModel(o));
-      })
-    );
+    const promise = async () => {
+      const { data, error } = await this.supabase.from('ordens_servico').select('*, clientes(nome), veiculos(marca, modelo)').eq('status', dbStatus).order('id', { ascending: false });
+      if (error) throw error;
+      return this.appendItensToOrdens(data);
+    };
+    return from(promise());
   }
 
   getReceitaTotal(): Observable<number> {
