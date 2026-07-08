@@ -1,15 +1,17 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent],
+  imports: [RouterOutlet, SidebarComponent, CommonModule],
   template: `
     <div class="app-layout">
-      <app-sidebar></app-sidebar>
-      <main class="main-content" [class.sidebar-collapsed]="false">
+      <app-sidebar *ngIf="showSidebar"></app-sidebar>
+      <main class="main-content" [class.no-sidebar]="!showSidebar">
         <router-outlet />
       </main>
     </div>
@@ -27,8 +29,22 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
       min-height: 100vh;
       background: var(--bg-primary);
     }
+    
+    .main-content.no-sidebar {
+      margin-left: 0;
+    }
   `]
 })
 export class AppComponent {
   title = 'OFIMEC';
+  showSidebar = false;
+  private router = inject(Router);
+
+  constructor() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      this.showSidebar = !event.urlAfterRedirects.includes('/login');
+    });
+  }
 }
