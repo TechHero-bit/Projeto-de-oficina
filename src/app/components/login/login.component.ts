@@ -64,7 +64,17 @@ export class LoginComponent {
       this.snackBar.open('Login realizado com sucesso!', 'Fechar', { duration: 3000 });
       this.router.navigate(['/dashboard']);
     } catch (error: any) {
-      this.snackBar.open(error.message || 'Erro ao realizar login', 'Fechar', {
+      console.error('Login error:', error);
+      let errorMessage = 'Erro ao realizar login';
+      if (error && error.message) {
+        errorMessage = error.message;
+      } else if (error && error.error_description) {
+        errorMessage = error.error_description;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+
+      this.snackBar.open(errorMessage, 'Fechar', {
         duration: 5000,
         panelClass: ['error-snackbar']
       });
