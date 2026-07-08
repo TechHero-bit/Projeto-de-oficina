@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ClienteService } from '../../services/cliente.service';
 import { VeiculoService } from '../../services/veiculo.service';
 import { OrdemServicoService } from '../../services/ordem-servico.service';
 import { OrdemServico } from '../../models/ordem-servico.model';
-import { Observable, combineLatest, map } from 'rxjs';
+import { Observable, combineLatest, map, tap } from 'rxjs';
 
 interface DashboardStats {
   totalClientes: number;
@@ -482,7 +482,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private veiculoService: VeiculoService,
-    private ordemServicoService: OrdemServicoService
+    private ordemServicoService: OrdemServicoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -500,13 +501,15 @@ export class DashboardComponent implements OnInit {
         ordensEmAndamento: ordens.filter(o => o.status === 'em_andamento').length,
         ordensConcluidas: ordens.filter(o => o.status === 'concluida').length,
         receitaTotal
-      }))
+      })),
+      tap(() => this.cdr.detectChanges())
     );
 
     this.recentOrdens$ = this.ordemServicoService.getOrdens().pipe(
       map(ordens => [...ordens].sort((a, b) =>
         new Date(b.dataAbertura).getTime() - new Date(a.dataAbertura).getTime()
-      ).slice(0, 5))
+      ).slice(0, 5)),
+      tap(() => this.cdr.detectChanges())
     );
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -175,17 +175,20 @@ export class OrdensServicoComponent implements OnInit {
   selectedVeiculoId?: number;
   ordemToDelete: OrdemServico | null = null;
 
-  constructor(private ordemService: OrdemServicoService, private clienteService: ClienteService, private veiculoService: VeiculoService, private route: ActivatedRoute) {}
+  constructor(private ordemService: OrdemServicoService, private clienteService: ClienteService, private veiculoService: VeiculoService, private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadOrdens();
-    this.clienteService.getClientes().subscribe(clientes => { this.clientes = clientes; });
-    this.veiculoService.getVeiculos().subscribe(veiculos => { this.veiculos = veiculos; });
+    this.clienteService.getClientes().subscribe(clientes => { this.clientes = clientes; this.cdr.detectChanges(); });
+    this.veiculoService.getVeiculos().subscribe(veiculos => { this.veiculos = veiculos; this.cdr.detectChanges(); });
     this.route.queryParams.subscribe(params => { if (params['action'] === 'new') { this.openModal(); } });
   }
 
   loadOrdens(): void {
-    this.ordemService.getOrdens().subscribe(ordens => { this.ordens = ordens; this.filterOrdens(); });
+    this.ordemService.getOrdens().subscribe({
+      next: (ordens) => { this.ordens = ordens; this.filterOrdens(); this.cdr.detectChanges(); },
+      error: (err) => console.error('Erro ao carregar Ordens de Serviço (possível erro de RLS):', err)
+    });
   }
 
   filterOrdens(): void {
@@ -208,7 +211,7 @@ export class OrdensServicoComponent implements OnInit {
   }
 
   toggleDetails(id: number): void { this.expandedOrder = this.expandedOrder === id ? null : id; }
-  updateStatus(ordem: OrdemServico, status: StatusOS): void { this.ordemService.updateStatus(ordem.id, status).subscribe(() => this.loadOrdens()); }
+  updateStatus(ordem: OrdemServico, status: StatusOS): void { this.ordemService.updateStatus(ordem.id, status).subscribe(() => { this.loadOrdens(); this.cdr.detectChanges(); }); }
   onClienteChange(): void { this.clienteVeiculos = this.veiculos.filter(v => v.clienteId === this.selectedClienteId); this.selectedVeiculoId = undefined; }
 
   openModal(): void {
@@ -238,9 +241,15 @@ export class OrdensServicoComponent implements OnInit {
     const veiculo = this.veiculos.find(v => v.id === this.selectedVeiculoId);
     const ordemData: any = { ...this.currentOrdem, clienteId: this.selectedClienteId, clienteNome: cliente?.nome, veiculoId: this.selectedVeiculoId, veiculoInfo: veiculo ? `${veiculo.marca} ${veiculo.modelo} ${veiculo.ano} - ${veiculo.placa}` : '', servicos: validServicos };
     if (this.isEditing && this.currentOrdem.id) { 
-      this.ordemService.updateOrdem(this.currentOrdem.id, ordemData).subscribe(() => this.loadOrdens()); 
+      this.ordemService.updateOrdem(this.currentOrdem.id, ordemData).subscribe({
+        next: () => { this.loadOrdens(); this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao atualizar OS:', err)
+      }); 
     } else { 
-      this.ordemService.addOrdem(ordemData).subscribe(() => this.loadOrdens()); 
+      this.ordemService.addOrdem(ordemData).subscribe({
+        next: () => { this.loadOrdens(); this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao adicionar OS:', err)
+      }); 
     }
     this.closeModal();
   }
@@ -248,7 +257,10 @@ export class OrdensServicoComponent implements OnInit {
   confirmDelete(ordem: OrdemServico): void { this.ordemToDelete = ordem; this.showDeleteConfirm = true; }
   deleteOrdem(): void { 
     if (this.ordemToDelete) { 
-      this.ordemService.deleteOrdem(this.ordemToDelete.id).subscribe(() => this.loadOrdens()); 
+      this.ordemService.deleteOrdem(this.ordemToDelete.id).subscribe({
+        next: () => { this.loadOrdens(); this.cdr.detectChanges(); },
+        error: (err) => console.error('Erro ao excluir OS:', err)
+      }); 
       this.showDeleteConfirm = false; 
       this.ordemToDelete = null; 
     } 

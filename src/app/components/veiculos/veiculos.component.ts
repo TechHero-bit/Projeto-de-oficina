@@ -1,16 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { VeiculoService } from '../../services/veiculo.service';
 import { ClienteService } from '../../services/cliente.service';
 import { Veiculo } from '../../models/veiculo.model';
 import { Cliente } from '../../models/cliente.model';
+import { VeiculoDialogComponent } from './veiculo-dialog.component';
 
 @Component({
   selector: 'app-veiculos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatDialogModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="page animate-fade-in-up">
       <div class="page-header">
@@ -39,32 +42,7 @@ import { Cliente } from '../../models/cliente.model';
         </div>
       </div>
       <div class="card" *ngIf="filteredVeiculos.length === 0"><div class="empty-state"><span class="material-icons-round">directions_car</span><h3>Nenhum veículo encontrado</h3><p>{{ searchTerm ? 'Tente outra busca' : 'Cadastre o primeiro veículo' }}</p></div></div>
-      <div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <div class="modal-header"><h2>{{ isEditing ? 'Editar Veículo' : 'Novo Veículo' }}</h2><button class="btn-icon" (click)="closeModal()"><span class="material-icons-round">close</span></button></div>
-          <form (ngSubmit)="saveVeiculo()">
-            <div class="form-group"><label for="clienteId">Proprietário</label>
-              <select class="form-control" id="clienteId" [(ngModel)]="currentVeiculo.clienteId" name="clienteId" required><option [ngValue]="undefined" disabled>Selecione o cliente</option><option *ngFor="let c of clientes" [ngValue]="c.id">{{ c.nome }}</option></select>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label for="marca">Marca</label><input type="text" class="form-control" id="marca" [(ngModel)]="currentVeiculo.marca" name="marca" placeholder="Ex: Toyota" required></div>
-              <div class="form-group"><label for="modelo">Modelo</label><input type="text" class="form-control" id="modelo" [(ngModel)]="currentVeiculo.modelo" name="modelo" placeholder="Ex: Corolla" required></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label for="ano">Ano</label><input type="number" class="form-control" id="ano" [(ngModel)]="currentVeiculo.ano" name="ano" placeholder="2024"></div>
-              <div class="form-group"><label for="placa">Placa</label><input type="text" class="form-control" id="placa" [(ngModel)]="currentVeiculo.placa" name="placa" placeholder="ABC-1D23"></div>
-            </div>
-            <div class="form-row">
-              <div class="form-group"><label for="cor">Cor</label><input type="text" class="form-control" id="cor" [(ngModel)]="currentVeiculo.cor" name="cor" placeholder="Prata"></div>
-              <div class="form-group"><label for="km">Quilometragem</label><input type="number" class="form-control" id="km" [(ngModel)]="currentVeiculo.quilometragem" name="quilometragem" placeholder="0"></div>
-            </div>
-            <div class="modal-actions">
-              <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
-              <button type="submit" class="btn btn-primary" id="btn-save-veiculo"><span class="material-icons-round">save</span> {{ isEditing ? 'Atualizar' : 'Cadastrar' }}</button>
-            </div>
-          </form>
-        </div>
-      </div>
+
       <div class="modal-backdrop" *ngIf="showDeleteConfirm" (click)="showDeleteConfirm = false">
         <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
           <div class="delete-icon"><span class="material-icons-round">warning</span></div>
@@ -81,40 +59,65 @@ import { Cliente } from '../../models/cliente.model';
 })
 export class VeiculosComponent implements OnInit {
   veiculos: Veiculo[] = []; filteredVeiculos: Veiculo[] = []; clientes: Cliente[] = [];
-  searchTerm = ''; showModal = false; showDeleteConfirm = false; isEditing = false;
-  currentVeiculo: Partial<Veiculo> = {}; veiculoToDelete: Veiculo | null = null;
+  searchTerm = ''; showDeleteConfirm = false;
+  veiculoToDelete: Veiculo | null = null;
 
-  constructor(private veiculoService: VeiculoService, private clienteService: ClienteService, private route: ActivatedRoute) {}
+  constructor(
+    private veiculoService: VeiculoService, 
+    private clienteService: ClienteService, 
+    private route: ActivatedRoute,
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.loadVeiculos();
-    this.clienteService.getClientes().subscribe(c => { this.clientes = c; });
+    this.clienteService.getClientes().subscribe(c => { this.clientes = c; this.cdr.markForCheck(); });
     this.route.queryParams.subscribe(params => { if (params['action'] === 'new') { this.openModal(); } });
   }
 
   loadVeiculos(): void {
-    this.veiculoService.getVeiculos().subscribe(v => { this.veiculos = v; this.filterVeiculos(); });
+    this.veiculoService.getVeiculos().subscribe(v => { this.veiculos = v; this.filterVeiculos(); this.cdr.markForCheck(); });
   }
 
   filterVeiculos(): void {
     const term = this.searchTerm.toLowerCase();
     this.filteredVeiculos = this.veiculos.filter(v => v.marca.toLowerCase().includes(term) || v.modelo.toLowerCase().includes(term) || v.placa.toLowerCase().includes(term) || (v.clienteNome && v.clienteNome.toLowerCase().includes(term)));
+    this.cdr.markForCheck();
   }
 
-  openModal(): void { this.currentVeiculo = { marca: '', modelo: '', ano: new Date().getFullYear(), placa: '', cor: '', quilometragem: 0 }; this.isEditing = false; this.showModal = true; }
-  editVeiculo(veiculo: Veiculo): void { this.currentVeiculo = { ...veiculo }; this.isEditing = true; this.showModal = true; }
-  closeModal(): void { this.showModal = false; this.currentVeiculo = {}; }
+  openModal(): void { 
+    this.openDialog({ marca: '', modelo: '', ano: new Date().getFullYear(), placa: '', cor: '', quilometragem: 0 }, false); 
+  }
+  
+  editVeiculo(veiculo: Veiculo): void { 
+    this.openDialog({ ...veiculo }, true); 
+  }
+  
+  private openDialog(veiculo: Partial<Veiculo>, isEditing: boolean): void {
+    const dialogRef = this.dialog.open(VeiculoDialogComponent, {
+      width: '560px',
+      data: { veiculo, isEditing, clientes: this.clientes },
+      panelClass: 'custom-dialog-container'
+    });
 
-  saveVeiculo(): void {
-    if (!this.currentVeiculo.marca || !this.currentVeiculo.modelo) return;
-    const cliente = this.clientes.find(c => c.id === this.currentVeiculo.clienteId);
-    if (cliente) { this.currentVeiculo.clienteNome = cliente.nome; }
-    if (this.isEditing && this.currentVeiculo.id) { 
-      this.veiculoService.updateVeiculo(this.currentVeiculo.id, this.currentVeiculo).subscribe(() => this.loadVeiculos()); 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.saveVeiculo(result, isEditing);
+      }
+    });
+  }
+
+  saveVeiculo(veiculoData: Partial<Veiculo>, isEditing: boolean): void {
+    if (!veiculoData.marca || !veiculoData.modelo) return;
+    const cliente = this.clientes.find(c => c.id === veiculoData.clienteId);
+    if (cliente) { veiculoData.clienteNome = cliente.nome; }
+    
+    if (isEditing && veiculoData.id) { 
+      this.veiculoService.updateVeiculo(veiculoData.id, veiculoData).subscribe(() => this.loadVeiculos()); 
     } else { 
-      this.veiculoService.addVeiculo(this.currentVeiculo as Omit<Veiculo, 'id'>).subscribe(() => this.loadVeiculos()); 
+      this.veiculoService.addVeiculo(veiculoData as Omit<Veiculo, 'id'>).subscribe(() => this.loadVeiculos()); 
     }
-    this.closeModal();
   }
 
   confirmDelete(veiculo: Veiculo): void { this.veiculoToDelete = veiculo; this.showDeleteConfirm = true; }
