@@ -2,17 +2,19 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { OrdemServicoService } from '../../services/ordem-servico.service';
 import { ClienteService } from '../../services/cliente.service';
 import { VeiculoService } from '../../services/veiculo.service';
 import { OrdemServico, StatusOS, ServicoItem } from '../../models/ordem-servico.model';
 import { Cliente } from '../../models/cliente.model';
 import { Veiculo } from '../../models/veiculo.model';
+import { OrdemServicoDialogComponent } from './ordem-servico-dialog.component';
 
 @Component({
   selector: 'app-ordens-servico',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MatDialogModule],
   template: `
     <div class="page animate-fade-in-up">
       <div class="page-header">
@@ -84,64 +86,6 @@ import { Veiculo } from '../../models/veiculo.model';
           <p>{{ searchTerm || statusFilter ? 'Tente outros filtros' : 'Crie a primeira ordem de serviço' }}</p>
         </div>
       </div>
-      <div class="modal-backdrop" *ngIf="showModal" (click)="closeModal()">
-        <div class="modal-content modal-lg" (click)="$event.stopPropagation()">
-          <div class="modal-header">
-            <h2>{{ isEditing ? 'Editar Ordem de Serviço' : 'Nova Ordem de Serviço' }}</h2>
-            <button class="btn-icon" (click)="closeModal()"><span class="material-icons-round">close</span></button>
-          </div>
-          <form (ngSubmit)="saveOrdem()">
-            <div class="form-row">
-              <div class="form-group">
-                <label for="os-cliente">Cliente</label>
-                <select class="form-control" id="os-cliente" [(ngModel)]="selectedClienteId" name="clienteId" (ngModelChange)="onClienteChange()" required>
-                  <option [ngValue]="undefined" disabled>Selecione o cliente</option>
-                  <option *ngFor="let c of clientes" [ngValue]="c.id">{{ c.nome }}</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="os-veiculo">Veículo</label>
-                <select class="form-control" id="os-veiculo" [(ngModel)]="selectedVeiculoId" name="veiculoId" required>
-                  <option [ngValue]="undefined" disabled>Selecione o veículo</option>
-                  <option *ngFor="let v of clienteVeiculos" [ngValue]="v.id">{{ v.marca }} {{ v.modelo }} - {{ v.placa }}</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="os-problema">Descrição do Problema</label>
-              <textarea class="form-control" id="os-problema" [(ngModel)]="currentOrdem.descricaoProblema" name="descricaoProblema" placeholder="Descreva o problema" rows="3" required></textarea>
-            </div>
-            <div class="form-group">
-              <label>Serviços</label>
-              <div class="services-form">
-                <div class="service-form-item" *ngFor="let servico of currentServicos; let i = index">
-                  <input type="text" class="form-control" [(ngModel)]="servico.descricao" [name]="'sDesc' + i" placeholder="Descrição do serviço">
-                  <input type="number" class="form-control service-value-input" [(ngModel)]="servico.valor" [name]="'sVal' + i" placeholder="Valor" step="0.01">
-                  <button type="button" class="btn-icon danger" (click)="removeServico(i)" *ngIf="currentServicos.length > 1"><span class="material-icons-round">remove_circle</span></button>
-                </div>
-                <button type="button" class="btn btn-secondary" (click)="addServico()"><span class="material-icons-round">add</span> Adicionar Serviço</button>
-              </div>
-              <div class="total-preview" *ngIf="currentServicos.length">Total: <strong>R$ {{ getServicosTotal() | number:'1.2-2' }}</strong></div>
-            </div>
-            <div class="form-row" *ngIf="isEditing">
-              <div class="form-group">
-                <label for="os-status">Status</label>
-                <select class="form-control" id="os-status" [(ngModel)]="currentOrdem.status" name="status">
-                  <option value="pendente">Pendente</option><option value="em_andamento">Em Andamento</option><option value="concluida">Concluída</option><option value="cancelada">Cancelada</option>
-                </select>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="os-obs">Observações</label>
-              <textarea class="form-control" id="os-obs" [(ngModel)]="currentOrdem.observacoes" name="observacoes" placeholder="Observações adicionais" rows="2"></textarea>
-            </div>
-            <div class="modal-actions">
-              <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancelar</button>
-              <button type="submit" class="btn btn-primary" id="btn-save-ordem"><span class="material-icons-round">save</span> {{ isEditing ? 'Atualizar' : 'Criar Ordem' }}</button>
-            </div>
-          </form>
-        </div>
-      </div>
       <div class="modal-backdrop" *ngIf="showDeleteConfirm" (click)="showDeleteConfirm = false">
         <div class="modal-content delete-modal" (click)="$event.stopPropagation()">
           <div class="delete-icon"><span class="material-icons-round">warning</span></div>
@@ -162,20 +106,20 @@ export class OrdensServicoComponent implements OnInit {
   filteredOrdens: OrdemServico[] = [];
   clientes: Cliente[] = [];
   veiculos: Veiculo[] = [];
-  clienteVeiculos: Veiculo[] = [];
   searchTerm = '';
   statusFilter = '';
-  showModal = false;
   showDeleteConfirm = false;
-  isEditing = false;
   expandedOrder: number | null = null;
-  currentOrdem: Partial<OrdemServico> = {};
-  currentServicos: ServicoItem[] = [{ descricao: '', valor: 0 }];
-  selectedClienteId?: number;
-  selectedVeiculoId?: number;
   ordemToDelete: OrdemServico | null = null;
 
-  constructor(private ordemService: OrdemServicoService, private clienteService: ClienteService, private veiculoService: VeiculoService, private route: ActivatedRoute, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private ordemService: OrdemServicoService, 
+    private clienteService: ClienteService, 
+    private veiculoService: VeiculoService, 
+    private route: ActivatedRoute, 
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.loadOrdens();
@@ -212,36 +156,37 @@ export class OrdensServicoComponent implements OnInit {
 
   toggleDetails(id: number): void { this.expandedOrder = this.expandedOrder === id ? null : id; }
   updateStatus(ordem: OrdemServico, status: StatusOS): void { this.ordemService.updateStatus(ordem.id, status).subscribe(() => { this.loadOrdens(); this.cdr.detectChanges(); }); }
-  onClienteChange(): void { this.clienteVeiculos = this.veiculos.filter(v => v.clienteId === this.selectedClienteId); this.selectedVeiculoId = undefined; }
 
   openModal(): void {
-    this.currentOrdem = { descricaoProblema: '', observacoes: '', status: 'pendente' };
-    this.currentServicos = [{ descricao: '', valor: 0 }];
-    this.selectedClienteId = undefined; this.selectedVeiculoId = undefined; this.clienteVeiculos = [];
-    this.isEditing = false; this.showModal = true;
+    this.openDialog({ descricaoProblema: '', observacoes: '', status: 'pendente' }, false);
   }
 
   editOrdem(ordem: OrdemServico): void {
-    this.currentOrdem = { ...ordem }; this.currentServicos = [...ordem.servicos.map(s => ({ ...s }))];
-    this.selectedClienteId = ordem.clienteId; this.selectedVeiculoId = ordem.veiculoId;
-    this.clienteVeiculos = this.veiculos.filter(v => v.clienteId === ordem.clienteId);
-    this.isEditing = true; this.showModal = true;
+    this.openDialog({ ...ordem }, true);
   }
 
-  closeModal(): void { this.showModal = false; this.currentOrdem = {}; }
-  addServico(): void { this.currentServicos.push({ descricao: '', valor: 0 }); }
-  removeServico(index: number): void { this.currentServicos.splice(index, 1); }
-  getServicosTotal(): number { return this.currentServicos.reduce((sum, s) => sum + (s.valor || 0), 0); }
+  private openDialog(ordem: Partial<OrdemServico>, isEditing: boolean): void {
+    const dialogRef = this.dialog.open(OrdemServicoDialogComponent, {
+      width: '680px',
+      data: { 
+        ordem, 
+        isEditing,
+        clientes: this.clientes,
+        veiculos: this.veiculos
+      },
+      panelClass: 'custom-dialog-container'
+    });
 
-  saveOrdem(): void {
-    if (!this.currentOrdem.descricaoProblema || !this.selectedClienteId || !this.selectedVeiculoId) return;
-    const validServicos = this.currentServicos.filter(s => s.descricao && s.valor > 0);
-    if (validServicos.length === 0) return;
-    const cliente = this.clientes.find(c => c.id === this.selectedClienteId);
-    const veiculo = this.veiculos.find(v => v.id === this.selectedVeiculoId);
-    const ordemData: any = { ...this.currentOrdem, clienteId: this.selectedClienteId, clienteNome: cliente?.nome, veiculoId: this.selectedVeiculoId, veiculoInfo: veiculo ? `${veiculo.marca} ${veiculo.modelo} ${veiculo.ano} - ${veiculo.placa}` : '', servicos: validServicos };
-    if (this.isEditing && this.currentOrdem.id) { 
-      this.ordemService.updateOrdem(this.currentOrdem.id, ordemData).subscribe({
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.saveOrdem(result, isEditing);
+      }
+    });
+  }
+
+  saveOrdem(ordemData: any, isEditing: boolean): void {
+    if (isEditing && ordemData.id) { 
+      this.ordemService.updateOrdem(ordemData.id, ordemData).subscribe({
         next: () => { this.loadOrdens(); this.cdr.detectChanges(); },
         error: (err) => console.error('Erro ao atualizar OS:', err)
       }); 
@@ -251,7 +196,6 @@ export class OrdensServicoComponent implements OnInit {
         error: (err) => console.error('Erro ao adicionar OS:', err)
       }); 
     }
-    this.closeModal();
   }
 
   confirmDelete(ordem: OrdemServico): void { this.ordemToDelete = ordem; this.showDeleteConfirm = true; }
